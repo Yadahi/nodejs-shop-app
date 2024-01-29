@@ -4,7 +4,7 @@ const path = require("path");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-const errorController = require("./controllers/error");
+const errorController = require("./controllers/errorController");
 
 const bodyParser = require("body-parser");
 
