@@ -15,7 +15,6 @@ const postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  console.log("body", req.body);
 
   const product = new Product(title, imageUrl, price, description);
   product.save();
