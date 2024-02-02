@@ -65,10 +65,19 @@ const getProducts = (req, res, next) => {
   });
 };
 
+const postDeleteProduct = (req, res, next) => {
+  console.log("req", req.body);
+  const id = req.body.productId;
+  console.log(id);
+  Product.deleteById(id);
+  return res.redirect("/admin/products");
+};
+
 module.exports = {
   getAddProduct,
   postAddProduct,
   getProducts,
   getEditProduct,
   postEditProduct,
+  postDeleteProduct,
 };
