@@ -10,13 +10,19 @@ const getAddProduct = (req, res, next) => {
 
 const postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
   const price = req.body.price;
+  const imageUrl = req.body.imageUrl;
   const description = req.body.description;
 
-  const product = new Product(null, title, imageUrl, price, description);
-  product.save();
-  res.redirect("/");
+  const product = new Product(null, title, price, imageUrl, description);
+  product
+    .save()
+    .then(() => {
+      return res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 
 const getEditProduct = (req, res, next) => {
@@ -47,12 +53,16 @@ const postEditProduct = (req, res, next) => {
   const product = new Product(
     id,
     updatedTitle,
-    updatedImageUrl,
     updatedPrice,
+    updatedImageUrl,
     updatedDescription
   );
-  product.save();
-  res.redirect("/admin/products");
+  product
+    .save()
+    .then(res.redirect("/admin/products"))
+    .catch((err) => {
+      err.message;
+    });
 };
 
 const getProducts = (req, res, next) => {
