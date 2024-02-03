@@ -41,7 +41,7 @@ module.exports = class Product {
       }
       this.id = Math.floor(Math.random() * 99999).toString();
       products.push(this);
-      console.log("this", this);
+
       fs.writeFile(pathProduct, JSON.stringify(products), (err) => {
         console.log(err);
       });
