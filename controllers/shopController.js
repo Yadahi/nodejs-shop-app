@@ -17,12 +17,23 @@ const getProducts = (req, res, next) => {
 
 const getProduct = (req, res, next) => {
   const productId = req.params.productId;
-  Product.findById(productId)
-    .then(([product]) => {
+  // Product.findAll({ where: { id: productId } })
+  //   .then((products) => {
+  //     res.render("shop/product-detail", {
+  //       pageTitle: products[0].title,
+  //       path: "/products",
+  //       product: products[0],
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err.message);
+  //   });
+  Product.findByPk(productId)
+    .then((product) => {
       res.render("shop/product-detail", {
         pageTitle: product.title,
         path: "/products",
-        product: product[0],
+        product: product,
       });
     })
     .catch((err) => {
