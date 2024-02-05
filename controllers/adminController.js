@@ -1,5 +1,7 @@
 const Product = require("../models/product");
 
+// You use it in the same way, so you can simply replace all occurrences of findById() with findByPk()
+
 const getAddProduct = (req, res, next) => {
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
@@ -14,14 +16,18 @@ const postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
 
-  const product = new Product(null, title, price, imageUrl, description);
-  product
-    .save()
-    .then(() => {
-      return res.redirect("/");
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  })
+    .then((result) => {
+      // console.log(result);
+      console.log("Created product");
     })
     .catch((err) => {
-      console.log(err.message);
+      console.log(err);
     });
 };
 
