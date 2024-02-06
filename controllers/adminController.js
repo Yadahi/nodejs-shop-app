@@ -23,8 +23,8 @@ const postAddProduct = (req, res, next) => {
     description: description,
   })
     .then((result) => {
-      // console.log(result);
       console.log("Created product");
+      res.redirect("/admin/products");
     })
     .catch((err) => {
       console.log(err);
@@ -95,9 +95,17 @@ const getProducts = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
   const id = req.body.productId;
-  Product.deleteById(id);
-
-  return res.redirect("/admin/products");
+  Product.findByPk(id)
+    .then((product) => {
+      return product.destroy();
+    })
+    .then((result) => {
+      console.log("DESTROYED PRODUCT");
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 module.exports = {
