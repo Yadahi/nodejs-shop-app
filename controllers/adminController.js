@@ -77,20 +77,19 @@ const postAddProduct = (req, res, next) => {
 //     });
 // };
 
-// const getProducts = (req, res, next) => {
-//   req.user
-//     .getProducts()
-//     .then((products) => {
-//       res.render("admin/products", {
-//         prods: products,
-//         pageTitle: "Admin Products",
-//         path: "/admin/products",
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const getProducts = (req, res, next) => {
+  Product.fetchAll()
+    .then((products) => {
+      res.render("admin/products", {
+        prods: products,
+        pageTitle: "Admin Products",
+        path: "/admin/products",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const postDeleteProduct = (req, res, next) => {
 //   const id = req.body.productId;
@@ -110,7 +109,7 @@ const postAddProduct = (req, res, next) => {
 module.exports = {
   getAddProduct,
   postAddProduct,
-  // getProducts,
+  getProducts,
   // getEditProduct,
   // postEditProduct,
   // postDeleteProduct,
