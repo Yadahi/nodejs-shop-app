@@ -27,31 +27,29 @@ const postAddProduct = (req, res, next) => {
     });
 };
 
-// const getEditProduct = (req, res, next) => {
-//   const productId = req.params.productId;
-//   const editMode = req.query.edit;
+const getEditProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  const editMode = req.query.edit;
 
-//   if (!editMode) {
-//     return res.redirect("/");
-//   }
-//   req.user
-//     .getProducts({ where: { id: productId } })
-//     .then((products) => {
-//       const product = products[0];
-//       if (!product) {
-//         return res.redirect("/");
-//       }
-//       res.render("admin/edit-product", {
-//         pageTitle: "Edit Product",
-//         path: "/admin/edit-product",
-//         editing: editMode,
-//         product: product,
-//       });
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+  if (!editMode) {
+    return res.redirect("/");
+  }
+  Product.findById()
+    .then((product) => {
+      if (!product) {
+        return res.redirect("/");
+      }
+      res.render("admin/edit-product", {
+        pageTitle: "Edit Product",
+        path: "/admin/edit-product",
+        editing: editMode,
+        product: product,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 // const postEditProduct = (req, res, next) => {
 //   const id = req.body.productId;
@@ -110,7 +108,7 @@ module.exports = {
   getAddProduct,
   postAddProduct,
   getProducts,
-  // getEditProduct,
+  getEditProduct,
   // postEditProduct,
   // postDeleteProduct,
 };
