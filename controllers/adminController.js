@@ -1,4 +1,7 @@
 const Product = require("../models/product");
+const mongodb = require("mongodb");
+
+const ObjectId = mongodb.ObjectId;
 
 // You use it in the same way, so you can simply replace all occurrences of findById() with findByPk()
 
@@ -34,7 +37,7 @@ const getEditProduct = (req, res, next) => {
   if (!editMode) {
     return res.redirect("/");
   }
-  Product.findById()
+  Product.findById(productId)
     .then((product) => {
       if (!product) {
         return res.redirect("/");
@@ -51,29 +54,31 @@ const getEditProduct = (req, res, next) => {
     });
 };
 
-// const postEditProduct = (req, res, next) => {
-//   const id = req.body.productId;
-//   const updatedTitle = req.body.title;
-//   const updatedImageUrl = req.body.imageUrl;
-//   const updatedPrice = req.body.price;
-//   const updatedDescription = req.body.description;
+const postEditProduct = (req, res, next) => {
+  const productId = req.body.productId;
+  const updatedTitle = req.body.title;
+  const updatedImageUrl = req.body.imageUrl;
+  const updatedPrice = req.body.price;
+  const updatedDescription = req.body.description;
 
-//   Product.findByPk(id)
-//     .then((product) => {
-//       product.title = updatedTitle;
-//       product.updatedImageUrl = updatedImageUrl;
-//       product.price = updatedPrice;
-//       product.description = updatedDescription;
-//       return product.save();
-//     })
-//     .then((result) => {
-//       console.log("UPDATED PRODUCT");
-//       res.redirect("/admin/products");
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+  const product = new Product(
+    updatedTitle,
+    updatedPrice,
+    updatedDescription,
+    updatedImageUrl,
+    new ObjectId(productId)
+  );
+
+  product
+    .save()
+    .then((result) => {
+      console.log("UPDATED PRODUCT");
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 const getProducts = (req, res, next) => {
   Product.fetchAll()
@@ -109,6 +114,6 @@ module.exports = {
   postAddProduct,
   getProducts,
   getEditProduct,
-  // postEditProduct,
+  postEditProduct,
   // postDeleteProduct,
 };
