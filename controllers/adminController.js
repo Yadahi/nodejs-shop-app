@@ -1,7 +1,4 @@
 const Product = require("../models/product");
-const mongodb = require("mongodb");
-
-const ObjectId = mongodb.ObjectId;
 
 // You use it in the same way, so you can simply replace all occurrences of findById() with findByPk()
 
@@ -21,7 +18,7 @@ const postAddProduct = (req, res, next) => {
   const product = new Product(title, price, description, imageUrl);
   product
     .save()
-    .then((result) => {
+    .then(() => {
       console.log("Created product");
       res.redirect("/admin/products");
     })
@@ -66,7 +63,7 @@ const postEditProduct = (req, res, next) => {
     updatedPrice,
     updatedDescription,
     updatedImageUrl,
-    new ObjectId(productId)
+    prodId
   );
 
   product
@@ -94,20 +91,17 @@ const getProducts = (req, res, next) => {
     });
 };
 
-// const postDeleteProduct = (req, res, next) => {
-//   const id = req.body.productId;
-//   Product.findByPk(id)
-//     .then((product) => {
-//       return product.destroy();
-//     })
-//     .then((result) => {
-//       console.log("DESTROYED PRODUCT");
-//       res.redirect("/admin/products");
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
+const postDeleteProduct = (req, res, next) => {
+  const id = req.body.productId;
+  Product.deleteById(id)
+    .then(() => {
+      console.log("DESTROYED PRODUCT");
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 module.exports = {
   getAddProduct,
@@ -115,5 +109,5 @@ module.exports = {
   getProducts,
   getEditProduct,
   postEditProduct,
-  // postDeleteProduct,
+  postDeleteProduct,
 };
