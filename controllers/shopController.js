@@ -108,15 +108,7 @@ const postCart = (req, res, next) => {
 const postCardDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
   req.user
-    .getCart()
-    .then((cart) => {
-      console.log("cart 77", cart);
-      return cart.getProducts({ where: { id: productId } });
-    })
-    .then((products) => {
-      const product = products[0];
-      return product.cartItem.destroy();
-    })
+    .deleteItemFromCart(productId)
     .then((result) => {
       res.redirect("/cart");
     })
