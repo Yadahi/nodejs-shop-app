@@ -34,7 +34,7 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect("mongodb+srv://vilia:8RGebmFeupiPlK2X@cluster0.t5uhksi.mongodb.net/")
+  .connect("mongodb+srv://user:password@cluster0.t5uhksi.mongodb.net/")
   .then((result) => {
     app.listen(3000);
   })
