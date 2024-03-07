@@ -1,9 +1,9 @@
 const express = require("express");
+const mongoose = require("mongoose");
 
 const path = require("path");
 
 const app = express();
-const mongoConnect = require("./util/database").mongoConnect;
 const User = require("./models/user");
 
 app.set("view engine", "ejs");
@@ -33,6 +33,9 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(3000);
-});
+mongoose
+  .connect("mongodb+srv://vilia:8RGebmFeupiPlK2X@cluster0.t5uhksi.mongodb.net/")
+  .then((result) => {
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
