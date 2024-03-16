@@ -4,11 +4,12 @@ const Order = require("../models/order");
 const getProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
-      console.log(products);
+      // console.log(products);
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "All Products",
         path: "/products",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -24,6 +25,7 @@ const getProduct = (req, res, next) => {
         pageTitle: product.title,
         path: "/products",
         product: product,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -38,6 +40,7 @@ const getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -54,6 +57,7 @@ const getCart = (req, res, next) => {
         path: "/cart",
         pageTitle: "Your Cart",
         products: products,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -86,7 +90,7 @@ const postCart = (req, res, next) => {
   const productId = req.body.productId;
   Product.findById(productId)
     .then((product) => {
-      req.user.addToCart(product);
+      req.session.user.addToCart(product);
     })
     .then(() => {
       res.redirect("/cart");
@@ -116,13 +120,13 @@ const postOrder = (req, res, next) => {
         return { quantity: item.quantity, product: { ...item.productId._doc } };
       });
       const order = new Order({
-        user: { name: req.user.name, userId: req.user },
+        user: { name: req.session.user.name, userId: req.user },
         products: products,
       });
       return order.save();
     })
     .then((result) => {
-      return req.user.clearCart();
+      return req.session.user.clearCart();
     })
     .then(() => {
       res.redirect("/orders");
@@ -131,12 +135,13 @@ const postOrder = (req, res, next) => {
 };
 
 const getOrders = (req, res, next) => {
-  Order.find({ "user.userId": req.user._id })
+  Order.find({ "user.userId": req.session.user._id })
     .then((orders) => {
       res.render("shop/orders", {
         path: "/orders",
         pageTitle: "Your Orders",
         orders: orders,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -146,6 +151,7 @@ const getCheckout = (req, res, next) => {
   res.render("shop/checkout", {
     path: "/checkout",
     pageTitle: "Checkout",
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
