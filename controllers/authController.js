@@ -26,7 +26,13 @@ const postLogin = (req, res, next) => {
     });
 };
 
+const getLogout = (req, res, next) => {
+  req.session.destroy();
+  res.redirect("/");
+};
+
 module.exports = {
   getLogin,
   postLogin,
+  getLogout,
 };
