@@ -1,11 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const credentials = require("./config/credentials");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
 const path = require("path");
+const MONGODB_URI = `mongodb+srv://${credentials.username}:${credentials.password}@cluster0.t5uhksi.mongodb.net/shop`;
 
 const app = express();
 const User = require("./models/user");
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -18,18 +25,14 @@ const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
-
-app.use((req, res, next) => {
-  User.findById("65eb77460b55e1fec5cefbb4")
-    .then((user) => {
-      console.log(user);
-      req.user = user;
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+app.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
@@ -38,9 +41,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    `mongodb+srv://${credentials.username}:${credentials.password}@cluster0.t5uhksi.mongodb.net/shop`
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {
