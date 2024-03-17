@@ -90,7 +90,7 @@ const postCart = (req, res, next) => {
   const productId = req.body.productId;
   Product.findById(productId)
     .then((product) => {
-      req.session.user.addToCart(product);
+      req.user.addToCart(product);
     })
     .then(() => {
       res.redirect("/cart");
@@ -120,13 +120,13 @@ const postOrder = (req, res, next) => {
         return { quantity: item.quantity, product: { ...item.productId._doc } };
       });
       const order = new Order({
-        user: { name: req.session.user.name, userId: req.user },
+        user: { name: req.user.name, userId: req.user },
         products: products,
       });
       return order.save();
     })
     .then((result) => {
-      return req.session.user.clearCart();
+      return req.user.clearCart();
     })
     .then(() => {
       res.redirect("/orders");
@@ -135,7 +135,7 @@ const postOrder = (req, res, next) => {
 };
 
 const getOrders = (req, res, next) => {
-  Order.find({ "user.userId": req.session.user._id })
+  Order.find({ "user.userId": req.user._id })
     .then((orders) => {
       res.render("shop/orders", {
         path: "/orders",

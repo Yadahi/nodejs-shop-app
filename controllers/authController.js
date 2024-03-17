@@ -12,14 +12,15 @@ const getLogin = (req, res, next) => {
 const postLogin = (req, res, next) => {
   User.findById("65eb77460b55e1fec5cefbb4")
     .then((user) => {
-      console.log("in auth", user);
-
       if (!user) {
         return res.redirect("/login");
       }
       req.session.isLoggedIn = true;
       req.session.user = user;
-      return res.redirect("/");
+      req.session.save((err) => {
+        console.log(err);
+        res.redirect("/");
+      });
     })
     .catch((err) => {
       console.log(err);
