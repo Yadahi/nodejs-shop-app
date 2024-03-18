@@ -34,7 +34,34 @@ const postLogin = (req, res, next) => {
     });
 };
 
-const postSignup = (req, res, next) => {};
+const postSignup = (req, res, next) => {
+  console.log("postSignup");
+  const email = req.body.email;
+  const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword;
+
+  User.findOne({ email: email })
+    .then((userDoc) => {
+      if (userDoc) {
+        console.log("userDoc", userDoc);
+        return res.redirect("/signup");
+      }
+      const user = new User({
+        email: email,
+        password: password,
+        card: { items: [] },
+      });
+      console.log("user", user);
+      return user.save();
+    })
+    .then((result) => {
+      console.log("test");
+      res.redirect("/login");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
 const postLogout = (req, res, next) => {
   req.session.destroy((err) => {
