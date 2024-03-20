@@ -62,7 +62,7 @@ const postSignup = (req, res, next) => {
       return bcrypt.hash(password, 12).then((hashedPassword) => {
         const user = new User({
           email: email,
-          password: password,
+          password: hashedPassword,
           card: { items: [] },
         });
 
