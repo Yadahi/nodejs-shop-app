@@ -49,7 +49,6 @@ const postLogin = (req, res, next) => {
 };
 
 const postSignup = (req, res, next) => {
-  console.log("postSignup");
   const email = req.body.email;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
