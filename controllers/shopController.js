@@ -63,27 +63,6 @@ const getCart = (req, res, next) => {
     .catch((err) => {
       console.log(err);
     });
-  //   Product.fetchAll((products) => {
-  //     const cartProducts = [];
-  //     for (product of products) {
-  //       const cartProductData = cart.products.find(
-  //         (cartProduct) => cartProduct.id === product.id
-  //       );
-  //       if (cartProductData) {
-  //         cartProducts.push({
-  //           productData: product,
-  //           quantity: cartProductData.quantity,
-  //         });
-  //       }
-  //     }
-
-  //     res.render("shop/cart", {
-  //       path: "/cart",
-  //       pageTitle: "Your Cart",
-  //       products: cartProducts,
-  //     });
-  //   });
-  // });
 };
 
 const postCart = (req, res, next) => {
@@ -116,11 +95,10 @@ const postOrder = (req, res, next) => {
     .populate("cart.items.productId")
     .then((user) => {
       const products = user.cart.items.map((item) => {
-        console.log("item", item.productId);
         return { quantity: item.quantity, product: { ...item.productId._doc } };
       });
       const order = new Order({
-        user: { name: req.user.name, userId: req.user },
+        user: { email: req.user.email, userId: req.user },
         products: products,
       });
       return order.save();
