@@ -162,6 +162,9 @@ const postReset = (req, res, next) => {
           <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
           `,
         });
+      })
+      .catch((err) => {
+        console.log(err);
       });
   });
 };
