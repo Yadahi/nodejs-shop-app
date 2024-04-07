@@ -1,6 +1,7 @@
 const express = require("express");
 
-const { check, body } = require("express-validator");
+const { body } = require("express-validator");
+const User = require("../models/user");
 
 const authController = require("../controllers/authController");
 
@@ -31,7 +32,7 @@ router.post(
 router.post(
   "/signup",
   [
-    check("email")
+    body("email")
       .isEmail()
       .withMessage("Please enter a valid email")
       .custom((value, { req }) => {
@@ -41,6 +42,7 @@ router.post(
               "E-Mail exists already, please pick a different one."
             );
           }
+          console.log("userDoc", userDoc);
         });
       })
       .normalizeEmail(),

@@ -1,4 +1,6 @@
+const { hash } = require("bcryptjs");
 const Product = require("../models/product");
+const { validationResult } = require("express-validator");
 
 // You use it in the same way, so you can simply replace all occurrences of findById() with findByPk()
 
@@ -7,6 +9,8 @@ const getAddProduct = (req, res, next) => {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
+    hasError: false,
+    errorMessage: null,
   });
 };
 
@@ -15,6 +19,24 @@ const postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
   const description = req.body.description;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+        imageUrl: imageUrl,
+      },
+      errorMessage: errors.array()[0].msg,
+    });
+  }
 
   const product = new Product({
     title: title,
@@ -52,6 +74,8 @@ const getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode,
         product: product,
+        hasError: false,
+        errorMessage: null,
       });
     })
     .catch((err) => {
