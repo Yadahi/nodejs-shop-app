@@ -46,7 +46,22 @@ router.post(
 
 router.get("/edit-product/:productId", isAuth, adminController.getEditProduct);
 
-router.post("/edit-product", isAuth, adminController.postEditProduct);
+router.post(
+  "/edit-product",
+  [
+    body("title", "Title must not be empty!")
+      .isString()
+      .isLength({ min: 3 })
+      .trim(),
+    body("imageUrl", "Image URL must not be empty!").isURL(),
+    body("price", "Price must not be empty!").isFloat(),
+    body("description", "Description must not be empty!")
+      .isLength({ min: 5, max: 400 })
+      .trim(),
+  ],
+  isAuth,
+  adminController.postEditProduct
+);
 
 router.post("/delete-product", isAuth, adminController.postDeleteProduct);
 
