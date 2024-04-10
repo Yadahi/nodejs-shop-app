@@ -51,11 +51,15 @@ const postAddProduct = (req, res, next) => {
   product
     .save()
     .then(() => {
+      // throw new Error("Could not save product.");
       console.log("Created product");
       res.redirect("/admin/products");
     })
     .catch((err) => {
-      res.redirect("/500");
+      // res.redirect("/500");
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -68,6 +72,7 @@ const getEditProduct = (req, res, next) => {
   }
   Product.findById(productId)
     .then((product) => {
+      // throw new Error("Could not find the product.");
       if (!product) {
         return res.redirect("/");
       }
@@ -82,7 +87,9 @@ const getEditProduct = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -115,6 +122,8 @@ const postEditProduct = (req, res, next) => {
 
   Product.findById(productId)
     .then((product) => {
+      // throw new Error("Could not edit the product.");
+
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect("/");
       }
@@ -128,7 +137,9 @@ const postEditProduct = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
