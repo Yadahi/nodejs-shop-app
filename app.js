@@ -45,6 +45,7 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      throw new Error("Dummy");
       if (!user) {
         return next();
       }
@@ -52,7 +53,7 @@ app.use((req, res, next) => {
       next();
     })
     .catch((err) => {
-      throw new Error(err);
+      throw next(new Error(err));
     });
 });
 
