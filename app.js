@@ -5,6 +5,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 
 const path = require("path");
 const MONGODB_URI = `mongodb+srv://${credentials.username}:${credentials.password}@cluster0.t5uhksi.mongodb.net/shop`;
@@ -27,6 +28,7 @@ const authRoutes = require("./routes/auth");
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ dest: "images" }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({

@@ -18,7 +18,7 @@ const getAddProduct = (req, res, next) => {
 const postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;
-  const imageUrl = req.body.image;
+  const imageUrl = req.file;
   const description = req.body.description;
   console.log("img", imageUrl);
 
