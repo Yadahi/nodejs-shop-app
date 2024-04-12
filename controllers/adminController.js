@@ -18,8 +18,9 @@ const getAddProduct = (req, res, next) => {
 const postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.body.image;
   const description = req.body.description;
+  console.log("img", imageUrl);
 
   const errors = validationResult(req);
 

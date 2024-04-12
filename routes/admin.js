@@ -34,7 +34,6 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim(),
-    body("imageUrl", "Image URL must not be empty!").isURL(),
     body("price", "Price must not be empty!").isFloat(),
     body("description", "Description must not be empty!")
       .isLength({ min: 5, max: 400 })
