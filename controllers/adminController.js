@@ -18,9 +18,26 @@ const getAddProduct = (req, res, next) => {
 const postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const price = req.body.price;
-  const imageUrl = req.file;
+  const image = req.file;
   const description = req.body.description;
-  console.log("img file:", imageUrl);
+  console.log("img file:", image);
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+      },
+      errorMessage: "Attached file is not an image",
+      validationErrors: [],
+    });
+  }
+
+  const imageUrl = image.path;
 
   const errors = validationResult(req);
 
@@ -34,7 +51,6 @@ const postAddProduct = (req, res, next) => {
         title: title,
         price: price,
         description: description,
-        imageUrl: imageUrl,
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
@@ -97,7 +113,7 @@ const getEditProduct = (req, res, next) => {
 const postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   const updatedTitle = req.body.title;
-  const updatedImageUrl = req.body.imageUrl;
+  const image = req.file;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
@@ -111,7 +127,6 @@ const postEditProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDescription,
         _id: productId,
@@ -129,7 +144,9 @@ const postEditProduct = (req, res, next) => {
         return res.redirect("/");
       }
       product.title = updatedTitle;
-      product.imageUrl = updatedImageUrl;
+      if (image) {
+        product.imageUrl = image.path;
+      }
       product.price = updatedPrice;
       product.description = updatedDescription;
       return product.save().then((result) => {

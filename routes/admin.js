@@ -8,22 +8,7 @@ const isAuth = require("../middleware/is-auth");
 
 const router = express.Router();
 
-router.get(
-  "/add-product",
-  [
-    body("title", "Title must not be empty!")
-      .isString()
-      .isLength({ min: 3 })
-      .trim(),
-    body("imageUrl", "Image URL must not be empty!").isURL(),
-    body("price", "Price must not be empty!").isFloat(),
-    body("description", "Description must not be empty!")
-      .isLength({ min: 5, max: 400 })
-      .trim(),
-  ],
-  isAuth,
-  adminController.getAddProduct
-);
+router.get("/add-product", isAuth, adminController.getAddProduct);
 
 router.get("/products", isAuth, adminController.getProducts);
 
@@ -52,7 +37,6 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim(),
-    body("imageUrl", "Image URL must not be empty!").isURL(),
     body("price", "Price must not be empty!").isFloat(),
     body("description", "Description must not be empty!")
       .isLength({ min: 5, max: 400 })
