@@ -1,6 +1,7 @@
 const { hash } = require("bcryptjs");
 const Product = require("../models/product");
 const { validationResult } = require("express-validator");
+const fileHelper = require("../util/file");
 
 // You use it in the same way, so you can simply replace all occurrences of findById() with findByPk()
 
@@ -145,6 +146,7 @@ const postEditProduct = (req, res, next) => {
       }
       product.title = updatedTitle;
       if (image) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       product.price = updatedPrice;
@@ -178,8 +180,16 @@ const getProducts = (req, res, next) => {
 };
 
 const postDeleteProduct = (req, res, next) => {
-  const id = req.body.productId;
-  Product.deleteOne({ _id: id, userId: req.user._id })
+  const productId = req.body.productId;
+
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("Product not found."));
+      }
+      fileHelper.deleteFile(product.imageUrl);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
     .then(() => {
       console.log("DESTROYED PRODUCT");
       res.redirect("/admin/products");
