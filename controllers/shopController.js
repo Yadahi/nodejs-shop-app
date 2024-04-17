@@ -39,17 +39,44 @@ const getProduct = (req, res, next) => {
     });
 };
 
+/**
+ * Retrieves a paginated list of products from the database and renders the
+ * "shop/index" view with the products and pagination information.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @return {Promise} A promise that resolves when the view is rendered.
+ */
 const getIndex = (req, res, next) => {
   const page = req.query.page;
+  let totalItems;
+
+  /**
+   * The code retrieves the total number of products from the database and
+   * performs a paginated query to retrieve a subset of products based
+   * on the specified page number and items per page.
+   */
 
   Product.find()
-    .skip((page - 1) * ITEMS_PER_PAGE)
-    .limit(ITEMS_PER_PAGE)
+    .countDocuments()
+    .then((numProducts) => {
+      totalItems = numProducts;
+      return Product.find()
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((products) => {
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        totalProducts: totalItems,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
