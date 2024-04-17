@@ -20,14 +20,38 @@ const csrfProtection = csrf();
 
 // multer configuration
 const fileStorage = multer.diskStorage({
+  /**
+   * A callback to determine the destination directory for uploaded files.
+   *
+   * @param {Object} req - The request object
+   * @param {Object} file - The file object being uploaded
+   * @param {Function} cb - The callback function to return the destination directory
+   * @return {void}
+   */
   destination: (req, file, cb) => {
     cb(null, "images");
   },
+  /**
+   * Generates a unique filename for an uploaded file.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} file - The file object being uploaded.
+   * @param {Function} cb - The callback function to return the generated filename.
+   * @return {void}
+   */
   filename: (req, file, cb) => {
     cb(null, new Date().toISOString() + "-" + file.originalname);
   },
 });
 
+/**
+ * Checks the mimetype of the uploaded file and passes a boolean value to the callback.
+ *
+ * @param {Object} req - The request object
+ * @param {Object} file - The file object being uploaded
+ * @param {Function} cb - The callback function to handle the result
+ * @return {void}
+ */
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "image/png" ||
@@ -50,9 +74,14 @@ const authRoutes = require("./routes/auth");
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+/**
+ * Middleware function to handle file uploads using multer.
+ */
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/images", express.static(path.join(__dirname, "images")));
 
