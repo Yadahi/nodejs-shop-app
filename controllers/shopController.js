@@ -4,7 +4,7 @@ const Product = require("../models/product");
 const Order = require("../models/order");
 const PDFDocument = require("pdfkit");
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 1;
 
 const getProducts = (req, res, next) => {
   Product.find()
@@ -49,7 +49,7 @@ const getProduct = (req, res, next) => {
  * @return {Promise} A promise that resolves when the view is rendered.
  */
 const getIndex = (req, res, next) => {
-  const page = req.query.page;
+  const page = Number(req.query.page) || 1;
   let totalItems;
 
   /**
@@ -61,7 +61,7 @@ const getIndex = (req, res, next) => {
   Product.find()
     .countDocuments()
     .then((numProducts) => {
-      totalItems = numProducts;
+      totalItems = Number(numProducts);
       return Product.find()
         .skip((page - 1) * ITEMS_PER_PAGE)
         .limit(ITEMS_PER_PAGE);
@@ -71,7 +71,7 @@ const getIndex = (req, res, next) => {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        totalProducts: totalItems,
+        currentPage: page,
         hasNextPage: ITEMS_PER_PAGE * page < totalItems,
         hasPreviousPage: page > 1,
         nextPage: page + 1,
