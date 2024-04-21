@@ -17,5 +17,12 @@
             <div class="centered">
                 <h2>Total: <%= totalSum %></h2>
             </div>
+            <div class="centered">
+                <form action="/create-checkout-session" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" id="checkout-button" class="btn">Checkout</button>
+                </form>
+                <script src="https://js.stripe.com/v3/"></script>
+            </div>
         </main>
         <%- include('../includes/end.ejs') %>

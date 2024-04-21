@@ -3,6 +3,8 @@ const path = require("path");
 const Product = require("../models/product");
 const Order = require("../models/order");
 const PDFDocument = require("pdfkit");
+const API_STRIPE_KEY = require("../config/credentials").API_STRIPE_KEY;
+const stripe = require("stripe")(API_STRIPE_KEY);
 
 const ITEMS_PER_PAGE = 1;
 
@@ -133,7 +135,6 @@ const getCheckout = (req, res, next) => {
       const products = user.cart.items; // array of products
       let total = 0;
       products.forEach((p) => {
-        console.log("p", p);
         total += p.quantity * p.productId.price;
       });
       res.render("shop/checkout", {
@@ -147,6 +148,53 @@ const getCheckout = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
+    });
+};
+
+/**
+ * Handles the checkout process for a user.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @return {Promise} A promise that resolves when the checkout process is complete.
+ */
+const postCheckout = (req, res, next) => {
+  let products;
+  let total = 0;
+
+  req.user
+    .populate("cart.items.productId")
+    .then((user) => {
+      products = user.cart.items;
+      total = 0;
+      products.forEach((p) => {
+        total += p.quantity * p.productId.price;
+      });
+
+      return stripe.checkout.sessions.create({
+        line_items: products.map((p) => {
+          return {
+            price_data: {
+              currency: "USD",
+              product_data: {
+                name: p.productId.title,
+                description: p.productId.description,
+              },
+              unit_amount: p.productId.price * 100,
+            },
+            quantity: p.quantity,
+          };
+        }),
+
+        mode: "payment",
+        success_url:
+          req.protocol + "://" + req.get("host") + "/checkout/success",
+        cancel_url: req.protocol + "://" + req.get("host") + "/checkout/cancel",
+      });
+    })
+    .then((session) => {
+      res.redirect(303, session.url);
     });
 };
 
@@ -174,6 +222,32 @@ const postCardDeleteProduct = (req, res, next) => {
       res.redirect("/cart");
     })
 
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+const getCheckoutSuccess = (req, res, next) => {
+  req.user
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items.map((item) => {
+        return { quantity: item.quantity, product: { ...item.productId._doc } };
+      });
+      const order = new Order({
+        user: { email: req.user.email, userId: req.user },
+        products: products,
+      });
+      return order.save();
+    })
+    .then((result) => {
+      return req.user.clearCart();
+    })
+    .then(() => {
+      res.redirect("/orders");
+    })
     .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
@@ -287,6 +361,8 @@ module.exports = {
   getIndex,
   getCart,
   getCheckout,
+  postCheckout,
+  getCheckoutSuccess,
   postCart,
   postOrder,
   getOrders,
