@@ -8,7 +8,7 @@ const flash = require("connect-flash");
 const multer = require("multer");
 
 const path = require("path");
-const MONGODB_URI = `mongodb+srv://${credentials.username}:${credentials.password}@cluster0.t5uhksi.mongodb.net/shop`;
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.t5uhksi.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
 const User = require("./models/user");
@@ -108,7 +108,6 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
-      // throw new Error("Dummy");
       if (!user) {
         return next();
       }
@@ -127,18 +126,9 @@ app.use(authRoutes);
 app.use("/500", errorController.get500);
 app.use(errorController.get404);
 
-app.use((err, req, res, next) => {
-  // res.redirect("/500");
-  res.status(500).render("500", {
-    pageTitle: "Error",
-    path: "/500",
-    isAuthenticated: req.session.isLoggedIn,
-  });
-});
-
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
   })
   .catch((err) => console.log(err));
