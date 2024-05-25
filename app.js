@@ -7,6 +7,9 @@ const csrf = require("csurf");
 const flash = require("connect-flash");
 const multer = require("multer");
 const helmet = require("helmet");
+const compress = require("compression");
+const morgan = require("morgan");
+const fs = require("fs");
 
 const path = require("path");
 const MONGODB_URI = `${process.env.MONGO_SCHEME}://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOSTNAME}/${process.env.MONGO_DEFAULT_DATABASE}`;
@@ -74,7 +77,15 @@ const errorController = require("./controllers/errorController");
 const authRoutes = require("./routes/auth");
 const bodyParser = require("body-parser");
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+
 app.use(helmet());
+app.use(compress());
+app.use(morgan("combined", { stream: accessLogStream }));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 /**
