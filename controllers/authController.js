@@ -2,7 +2,6 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const nodemailer = require("nodemailer");
-const credentials = require("../config/credentials");
 const { validationResult } = require("express-validator");
 
 const transporter = nodemailer.createTransport({
