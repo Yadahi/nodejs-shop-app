@@ -9,7 +9,7 @@ const multer = require("multer");
 const helmet = require("helmet");
 
 const path = require("path");
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.t5uhksi.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+const MONGODB_URI = `${process.env.MONGO_SCHEME}://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOSTNAME}/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
 const User = require("./models/user");
