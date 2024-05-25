@@ -5,3 +5,4 @@ nodemon.json
 access.log
 server.key
 server.cert
+package-lock.json
