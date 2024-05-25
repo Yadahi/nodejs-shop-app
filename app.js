@@ -12,7 +12,7 @@ const fs = require("fs");
 const https = require("https");
 
 const path = require("path");
-const MONGODB_URI = `${process.env.MONGO_SCHEME}://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOSTNAME}/${process.env.MONGO_DEFAULT_DATABASE}`;
+const MONGODB_URI = `${process.env.MONGO_SCHEME}://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOSTNAME}/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`;
 
 const app = express();
 const User = require("./models/user");
