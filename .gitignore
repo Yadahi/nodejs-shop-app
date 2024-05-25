@@ -3,3 +3,5 @@ config
 /images
 nodemon.json
 access.log
+server.key
+server.cert
